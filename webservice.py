@@ -7,6 +7,10 @@ from spyne import Application, rpc, ServiceBase, Integer, Boolean
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 
+import logging
+from wsgiref.simple_server import make_server
+
+### TODO: refactor with Flaskr
 
 persist = PersistentDB(psycopg2, 1000,
                        host='localhost',
@@ -47,15 +51,12 @@ application = Application([RelationCheckService],
                           out_protocol=Soap11())
  
 wsgi_application = WsgiApplication(application)
- 
+
 if __name__ == '__main__':
-    import logging
- 
-    from wsgiref.simple_server import make_server
- 
+
     logging.basicConfig(level=logging.INFO)
     logging.info("listening to http://127.0.0.1:8080")
     logging.info("wsdl is at: http://localhost:8080/?wsdl")
- 
+
     server = make_server('127.0.0.1', 8080, wsgi_application)
     server.serve_forever()
